@@ -107,7 +107,7 @@ main() {
     [ -e "$SOURCE_DIR" ] && rm -rf "$SOURCE_DIR"
     mkdir -p "$SOURCE_DIR"
     cp -r "$TARGET_APP" "$SOURCE_DIR"
-    create_dmg \
+    create-dmg \
       --window-size 500 300 \
       --background "./Images/dmg-background@2x.png" \
       --icon-size 96 \
@@ -132,26 +132,11 @@ main() {
   echo ">> done."
 }
 
-create_dmg() {
-  ./yoursway-create-dmg/create-dmg "$@"
-}
-
 ensure_create_dmg() {
-  if [[ ! -e ./yoursway-create-dmg/create-dmg ]]; then
-    echo >&2 "Ouch: missing 'yoursway-create-dmg' toolkit."
-    CLONE_CMD="git clone https://github.com/muhqu/yoursway-create-dmg.git"
-    while true; do
-        read -p "Wanna get it via: $CLONE_CMD ? [yes|no] " yn
-        case $yn in
-            [Yy]* ) $CLONE_CMD; break;;
-            [Nn]* ) exit 1;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
-    if [[ ! -e ./yoursway-create-dmg/create-dmg ]]; then
-      echo >&2 "Ouch: git clone failed?! 'yoursway-create-dmg' toolkit still missing."
-      exit 1;
-    fi
+  if [[ ! $(type -P "create-dmg") ]]; then
+    echo >&2 "Ouch: missing 'create-dmg' toolkit."
+    echo >&2 "Hint: You can install it via: brew install create-dmg"
+    exit 1;
   fi
 }
 
