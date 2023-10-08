@@ -15,8 +15,8 @@
 }
 
 - (void)awakeFromNib {
-	[[goPrevButton cell] setBackgroundStyle:NSBackgroundStyleDark];
-	[[goNextButton cell] setBackgroundStyle:NSBackgroundStyleDark];
+    [[goPrevButton cell] setBackgroundStyle:NSBackgroundStyleEmphasized];
+    [[goNextButton cell] setBackgroundStyle:NSBackgroundStyleEmphasized];
 }
 
 - (void)drawRect:(NSRect)rect {
@@ -42,7 +42,7 @@
 - (BOOL)performKeyEquivalent:(NSEvent*)event {
 	NSString* chars = [event charactersIgnoringModifiers];
 	if([chars isEqualToString:@"c"] &&
-	   (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) == NSControlKeyMask)) {
+       (([event modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask) == NSEventModifierFlagControl)) {
 		[[[self window] windowController] cancelCurrentCommand:self];
 		return YES;
 	}

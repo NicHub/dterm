@@ -307,8 +307,8 @@ static void * DTPreferencesContext = &DTPreferencesContext;
 		return;
 	
 	NSPasteboard* pb = [NSPasteboard generalPasteboard];
-	[pb declareTypes:@[NSStringPboardType] owner:self];
-	[pb setString:[resultsStorage string] forType:NSStringPboardType];
+    [pb declareTypes:@[NSPasteboardTypeString] owner:self];
+    [pb setString:[resultsStorage string] forType:NSPasteboardTypeString];
 	
 	[self deactivate];
 }

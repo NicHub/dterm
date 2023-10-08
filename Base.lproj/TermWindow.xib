@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -20,17 +20,17 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="DTerm" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="18" customClass="NSPanel">
+        <window title="DTerm" separatorStyle="shadow" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" appearanceType="darkAqua" animationBehavior="default" id="18" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" resizable="YES" utility="YES" nonactivatingPanel="YES" HUD="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="411" width="480" height="92"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="200" height="92"/>
             <view key="contentView" id="19" customClass="DTTermWindowContentView">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="92"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField verticalHuggingPriority="750" id="36">
+                    <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="36">
                         <rect key="frame" x="20" y="62" width="393" height="22"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" bezelStyle="round" id="37">
@@ -44,16 +44,16 @@
                             <binding destination="-2" name="value" keyPath="command" id="40"/>
                         </connections>
                     </textField>
-                    <customView id="139">
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="139">
                         <rect key="frame" x="20" y="8" width="440" height="45"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </customView>
-                    <popUpButton verticalHuggingPriority="750" id="257">
-                        <rect key="frame" x="421" y="60" width="39" height="25"/>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="257">
+                        <rect key="frame" x="414" y="59" width="50" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                        <popUpButtonCell key="cell" type="smallSquare" bezelStyle="smallSquare" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="260" id="258">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="menu"/>
+                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" selectedItem="260" id="258">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="system"/>
                             <menu key="menu" title="OtherViews" id="259">
                                 <items>
                                     <menuItem state="on" image="NSActionTemplate" hidden="YES" id="260"/>
@@ -163,44 +163,14 @@ DQ
                 <outlet property="delegate" destination="-2" id="32"/>
                 <outlet property="initialFirstResponder" destination="36" id="38"/>
             </connections>
+            <point key="canvasLocation" x="98" y="-94"/>
         </window>
-        <customView id="109" customClass="DTResultsView">
-            <rect key="frame" x="0.0" y="0.0" width="312" height="166"/>
+        <customView appearanceType="darkAqua" id="109" customClass="DTResultsView">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="239"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <textField verticalHuggingPriority="750" id="175" customClass="DTAntialiasControllableTextField">
-                    <rect key="frame" x="25" y="150" width="263" height="14"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="&lt;no localize&gt;" placeholderString="Results" bezelStyle="round" id="176">
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <accessibility description="command for displayed results"/>
-                    <connections>
-                        <binding destination="-2" name="fontSize" keyPath="resultsCommandFontSize" previousBinding="222" id="267"/>
-                        <binding destination="140" name="value" keyPath="selection.command" id="177"/>
-                        <binding destination="140" name="enabled" keyPath="selection.command" id="187"/>
-                        <binding destination="140" name="hidden" keyPath="selection.task" previousBinding="187" id="188">
-                            <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                <string key="NSValueTransformerName">NSIsNotNil</string>
-                            </dictionary>
-                        </binding>
-                        <binding destination="220" name="fontName" keyPath="values.DTFontName" id="222"/>
-                        <binding destination="220" name="textColor" keyPath="values.DTTextColor" id="231">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">NSKeyedUnarchiveFromData</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </textField>
-                <button toolTip="Command is running; click to cancel" id="163" customClass="DTProgressCancelButton">
-                    <rect key="frame" x="28" y="151" width="12" height="12"/>
+                <button toolTip="Command is running; click to cancel" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="163" customClass="DTProgressCancelButton">
+                    <rect key="frame" x="27" y="223" width="12" height="12"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSStopProgressFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="164">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -221,59 +191,8 @@ DQ
                         </binding>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" id="126" customClass="DTAntialiasControllableTextField">
-                    <rect key="frame" x="45" y="150" width="243" height="14"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="&lt;no localize&gt;" placeholderString="Results" bezelStyle="round" id="127">
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <binding destination="-2" name="fontSize" keyPath="resultsCommandFontSize" previousBinding="224" id="268"/>
-                        <binding destination="140" name="value" keyPath="selection.command" id="156">
-                            <dictionary key="options">
-                                <integer key="NSAllowsEditingMultipleValuesSelection" value="1"/>
-                                <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                <integer key="NSConditionallySetsEditable" value="0"/>
-                                <integer key="NSConditionallySetsEnabled" value="0"/>
-                                <integer key="NSConditionallySetsHidden" value="0"/>
-                                <integer key="NSContinuouslyUpdatesValue" value="0"/>
-                                <string key="NSMultipleValuesPlaceholder"></string>
-                                <string key="NSNoSelectionPlaceholder"></string>
-                                <string key="NSNotApplicablePlaceholder"></string>
-                                <string key="NSNullPlaceholder"></string>
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                <integer key="NSValidatesImmediately" value="0"/>
-                            </dictionary>
-                        </binding>
-                        <binding destination="140" name="enabled" keyPath="selection.command" id="178">
-                            <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
-                                <integer key="NSNoSelectionPlaceholder" value="1"/>
-                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
-                                <integer key="NSNullPlaceholder" value="-1"/>
-                            </dictionary>
-                        </binding>
-                        <binding destination="140" name="hidden" keyPath="selection.task" previousBinding="178" id="190">
-                            <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="1"/>
-                                <integer key="NSNoSelectionPlaceholder" value="1"/>
-                                <integer key="NSNotApplicablePlaceholder" value="1"/>
-                                <integer key="NSNullPlaceholder" value="1"/>
-                                <string key="NSValueTransformerName">NSIsNil</string>
-                            </dictionary>
-                        </binding>
-                        <binding destination="220" name="fontName" keyPath="values.DTFontName" id="224"/>
-                        <binding destination="220" name="textColor" keyPath="values.DTTextColor" id="235">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">NSKeyedUnarchiveFromData</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </textField>
-                <button toolTip="Show previous result (⌘⌥←)" verticalHuggingPriority="750" id="124">
-                    <rect key="frame" x="4" y="148" width="19" height="17"/>
+                <button toolTip="Show previous result (⌘⌥←)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="124">
+                    <rect key="frame" x="4" y="220" width="19" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSGoLeftTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="125">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -287,8 +206,8 @@ DQ
                         <binding destination="140" name="enabled" keyPath="canSelectPrevious" id="194"/>
                     </connections>
                 </button>
-                <button toolTip="Show next result (⌘⌥→)" verticalHuggingPriority="750" id="120">
-                    <rect key="frame" x="289" y="148" width="19" height="17"/>
+                <button toolTip="Show next result (⌘⌥→)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="120">
+                    <rect key="frame" x="455" y="220" width="19" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSGoRightTemplate" imagePosition="only" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="121">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -302,25 +221,25 @@ DQ
                         <binding destination="140" name="enabled" keyPath="canSelectNext" id="196"/>
                     </connections>
                 </button>
-                <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="110">
-                    <rect key="frame" x="4" y="4" width="308" height="142"/>
+                <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="110">
+                    <rect key="frame" x="4" y="4" width="476" height="206"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="z9p-45-bhK">
-                        <rect key="frame" x="0.0" y="0.0" width="308" height="142"/>
+                        <rect key="frame" x="0.0" y="0.0" width="476" height="206"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView editable="NO" drawsBackground="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" findStyle="panel" spellingCorrection="YES" id="113" customClass="DTResultsTextView">
-                                <rect key="frame" x="0.0" y="0.0" width="308" height="142"/>
+                                <rect key="frame" x="0.0" y="-66" width="476" height="206"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                <size key="minSize" width="308" height="142"/>
+                                <size key="minSize" width="476" height="206"/>
                                 <size key="maxSize" width="10000000" height="10000000"/>
                                 <attributedString key="textStorage">
                                     <fragment content="Lorem ipsum dolor sit er ">
                                         <attributes>
                                             <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" metaFont="label"/>
+                                            <font key="NSFont" usesAppearanceFont="YES"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural">
                                                 <tabStops>
                                                     <textTab alignment="left" location="0.0">
@@ -532,7 +451,7 @@ DQ
                                     <fragment content=" lamet, ">
                                         <attributes>
                                             <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" metaFont="label"/>
+                                            <font key="NSFont" usesAppearanceFont="YES"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural">
                                                 <tabStops>
                                                     <textTab alignment="left" location="0.0">
@@ -744,7 +663,7 @@ DQ
                                     <fragment content=" cillium adipisicing pecu, sed do ">
                                         <attributes>
                                             <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" metaFont="label"/>
+                                            <font key="NSFont" usesAppearanceFont="YES"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural">
                                                 <tabStops>
                                                     <textTab alignment="left" location="0.0">
@@ -957,7 +876,7 @@ DQ
                                         <mutableString key="content"> tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum Et harumd und lookum like Greek to me, dereud facilis est er expedit distinct. Nam liber te conscient to factor tum poen legum odioque civiuda</mutableString>
                                         <attributes>
                                             <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" metaFont="label"/>
+                                            <font key="NSFont" usesAppearanceFont="YES"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="justified" lineBreakMode="wordWrapping" baseWritingDirection="natural">
                                                 <tabStops>
                                                     <textTab alignment="left" location="0.0">
@@ -1070,17 +989,48 @@ DQ
                         <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="111">
-                        <rect key="frame" x="293" y="0.0" width="15" height="142"/>
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="111">
+                        <rect key="frame" x="334" y="0.0" width="15" height="191"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
+                <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="175" customClass="DTAntialiasControllableTextField">
+                    <rect key="frame" x="25" y="221" width="431" height="14"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="&lt;no localize&gt;" placeholderString="Results" usesSingleLineMode="YES" id="176">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <accessibility description="command for displayed results"/>
+                    <connections>
+                        <binding destination="140" name="hidden" keyPath="selection.task" id="Brp-ab-brW">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="-2" name="fontSize" keyPath="resultsCommandFontSize" previousBinding="222" id="267"/>
+                        <binding destination="140" name="value" keyPath="selection.command" id="177"/>
+                        <binding destination="220" name="fontName" keyPath="values.DTFontName" id="222"/>
+                        <binding destination="220" name="textColor" keyPath="values.DTTextColor" id="231">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSKeyedUnarchiveFromData</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </textField>
             </subviews>
             <accessibility description="Results"/>
             <connections>
                 <outlet property="goNextButton" destination="120" id="192"/>
                 <outlet property="goPrevButton" destination="124" id="191"/>
             </connections>
+            <point key="canvasLocation" x="98" y="163.5"/>
         </customView>
         <arrayController objectClassName="DTRunManager" automaticallyRearrangesObjects="YES" id="140">
             <declaredKeys>
@@ -1090,6 +1040,7 @@ DQ
                 <string>resultsStorage</string>
                 <string>selection</string>
             </declaredKeys>
+            <classReference key="objectClass" className="DTRunManager"/>
             <connections>
                 <binding destination="-2" name="contentArray" keyPath="runs" id="145">
                     <dictionary key="options">
@@ -1107,9 +1058,9 @@ DQ
         <userDefaultsController representsSharedInstance="YES" id="220"/>
     </objects>
     <resources>
-        <image name="NSActionTemplate" width="14" height="14"/>
-        <image name="NSGoLeftTemplate" width="9" height="12"/>
-        <image name="NSGoRightTemplate" width="9" height="12"/>
-        <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
+        <image name="NSActionTemplate" width="20" height="20"/>
+        <image name="NSGoLeftTemplate" width="12" height="17"/>
+        <image name="NSGoRightTemplate" width="12" height="17"/>
+        <image name="NSStopProgressFreestandingTemplate" width="20" height="20"/>
     </resources>
 </document>
