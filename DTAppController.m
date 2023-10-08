@@ -53,7 +53,8 @@ OSStatus DTHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void
 	signal(SIGPIPE, SIG_IGN);
 	
 	// Set some environment variables for our child processes
-	setenv("TERM_PROGRAM", "DTerm", 1);
+    setenv("TERM", "xterm-256color", 1);
+    setenv("TERM_PROGRAM", "DTerm", 1);
 	setenv("TERM_PROGRAM_VERSION", [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] cStringUsingEncoding:NSASCIIStringEncoding], 1);
 	
 	NSDictionary* defaultsDict =@{DTResultsToKeepKey: @"5",
