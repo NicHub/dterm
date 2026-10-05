@@ -22,9 +22,9 @@ For drag'n-drop installable DMG images, see the [releases][] section on GitHub.
 DTerm uses Ghostty automatically when it is installed at
 `/Applications/Ghostty.app/Contents/MacOS/ghostty`.
 
-Press `⌘↩` to send the command to the active terminal in Ghostty's active
-window. If Ghostty is not running, DTerm opens it normally. Set `DTERM_TERM`
-to override the terminal executable.
+Press `⌘↩` to copy `cd <directory>` to the clipboard and bring Ghostty to the
+front. Paste and run it in Ghostty if desired. If Ghostty is not running,
+DTerm opens it normally. Set `DTERM_TERM` to override the terminal executable.
 
 # How to build it yourself?
 

@@ -14,19 +14,6 @@
 
 static void * DTPreferencesContext = &DTPreferencesContext;
 
-static NSString *DTAppleScriptString(NSString *string) {
-	NSString *escapedString = [string stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
-	escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
-	escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
-	escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
-	return [NSString stringWithFormat:@"\"%@\"", escapedString];
-}
-
-@interface DTTermWindowController ()
-@property (copy) NSString *pendingGhosttyCommand;
-@property NSUInteger pendingGhosttyCommandAttempts;
-@end
-
 @implementation DTTermWindowController
 
 @synthesize workingDirectory, selectedURLs, command, runs, runsController;
@@ -266,14 +253,21 @@ static NSString *DTAppleScriptString(NSString *string) {
 	}
 
 	if([[terminalPath lastPathComponent] caseInsensitiveCompare:@"ghostty"] == NSOrderedSame) {
-		NSString *ghosttyCommand = [self commandToExecuteInGhostty];
-		if([self executeCommandInRunningGhostty:ghosttyCommand])
+		NSString *ghosttyCommand = [self commandToCopyForGhostty];
+		NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+		[pasteboard clearContents];
+		if(![pasteboard setString:ghosttyCommand forType:NSPasteboardTypeString]) {
+			NSLog(@"Could not copy Ghostty command to the clipboard");
+			return NO;
+		}
+
+		if([self activateRunningGhostty])
 			return YES;
 
-		// Without an existing Ghostty window, open the application normally.  Do
-		// not use -e: Ghostty asks for confirmation before executing such commands.
+		// Without an existing Ghostty window, open the application normally. The
+		// command is already on the clipboard for the user to paste if desired.
 		NSString *applicationPath = [[[terminalPath stringByDeletingLastPathComponent]
-								 stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
+									 stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
 		NSTask *task = [[NSTask alloc] init];
 		[task setLaunchPath:@"/usr/bin/open"];
 		[task setArguments:@[applicationPath]];
@@ -285,12 +279,6 @@ static NSString *DTAppleScriptString(NSString *string) {
 			NSLog(@"Could not open Ghostty: %@", exception);
 			return NO;
 		}
-
-		self.pendingGhosttyCommand = ghosttyCommand;
-		self.pendingGhosttyCommandAttempts = 0;
-		[self performSelector:@selector(executePendingGhosttyCommand)
-					   withObject:nil
-					   afterDelay:0.25];
 
 		return YES;
 	}
@@ -308,55 +296,28 @@ static NSString *DTAppleScriptString(NSString *string) {
 	return YES;
 }
 
-- (NSString *)commandToExecuteInGhostty {
-	NSString *terminalCommand = [NSString stringWithFormat:@"cd %@", escapedPath(self.workingDirectory)];
-	if([self.command length])
-		terminalCommand = [terminalCommand stringByAppendingFormat:@"; %@", self.command];
-	return terminalCommand;
+- (NSString *)commandToCopyForGhostty {
+	return [NSString stringWithFormat:@"cd %@", escapedPath(self.workingDirectory)];
 }
 
-- (BOOL)executeCommandInRunningGhostty:(NSString *)terminalCommand {
+- (BOOL)activateRunningGhostty {
 	SBApplication *ghostty = [SBApplication applicationWithBundleIdentifier:@"com.mitchellh.ghostty"];
 	if(![ghostty isRunning])
 		return NO;
 
-	NSString *source = [NSString stringWithFormat:
-		@"tell application id \"com.mitchellh.ghostty\"\n"
-		 "\tset targetTerminal to focused terminal of selected tab of front window\n"
-		 "\tinput text %@ to targetTerminal\n"
-		 "\tsend key \"enter\" to targetTerminal\n"
-		 "\tactivate window front window\n"
-		 "\treturn \"true\"\n"
-		 "end tell", DTAppleScriptString(terminalCommand)];
+	NSString *source = @"tell application id \"com.mitchellh.ghostty\"\n"
+		"\tactivate\n"
+		"\treturn \"true\"\n"
+		"end tell";
 	NSDictionary *error = nil;
 	NSAppleScript *script = [[NSAppleScript alloc] initWithSource:source];
 	NSAppleEventDescriptor *result = [script executeAndReturnError:&error];
 	if(!result) {
-		NSLog(@"Could not send command to Ghostty: %@", error);
+		NSLog(@"Could not activate Ghostty: %@", error);
 		return NO;
 	}
 
 	return [[result stringValue] boolValue];
-}
-
-- (void)executePendingGhosttyCommand {
-	if(!self.pendingGhosttyCommand)
-		return;
-
-	if([self executeCommandInRunningGhostty:self.pendingGhosttyCommand]) {
-		self.pendingGhosttyCommand = nil;
-		return;
-	}
-
-	self.pendingGhosttyCommandAttempts++;
-	if(self.pendingGhosttyCommandAttempts < 20) {
-		[self performSelector:@selector(executePendingGhosttyCommand)
-					   withObject:nil
-					   afterDelay:0.25];
-	} else {
-		NSLog(@"Ghostty did not become ready to receive a command");
-		self.pendingGhosttyCommand = nil;
-	}
 }
 
 - (IBAction)executeCommandInTerminal:(id) __unused sender {
