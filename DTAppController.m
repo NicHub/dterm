@@ -17,6 +17,7 @@ NSString* const DTShowDockIconKey = @"DTShowDockIcon";
 NSString* const DTTextColorKey = @"DTTextColor";
 NSString* const DTFontNameKey = @"DTFontName";
 NSString* const DTFontSizeKey = @"DTFontSize";
+NSString* const DTTerminalPathKey = @"DTTerminalPath";
 NSString* const DTDisableAntialiasingKey = @"DTDisableAntialiasing";
 NSString* const DTDisableWorkdirUpfind = @"DTDisableWorkdirUpfind";
 NSString* const DTWorkdirUpfindEntries = @"DTWorkdirUpfindEntries";
@@ -65,6 +66,7 @@ OSStatus DTHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent, void
 								  DTTextColorKey: [NSKeyedArchiver archivedDataWithRootObject:[[NSColor whiteColor] colorWithAlphaComponent:0.9]],
 								  DTFontNameKey: @"Monaco",
 								  DTFontSizeKey: @10.0f,
+								  DTTerminalPathKey: @"",
 								  DTDisableAntialiasingKey: @NO};
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDict];
 	

@@ -227,10 +227,74 @@ static void * DTPreferencesContext = &DTPreferencesContext;
     [runsController addObject:runManager];
 }
 
+- (NSString *)configuredTerminalPath {
+	NSString *environmentPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"DTERM_TERM"];
+	if([environmentPath length])
+		return environmentPath;
+
+	NSString *preferencePath = [[NSUserDefaults standardUserDefaults] stringForKey:DTTerminalPathKey];
+	if([preferencePath length])
+		return preferencePath;
+
+	NSString *ghosttyPath = @"/Applications/Ghostty.app/Contents/MacOS/ghostty";
+	if([[NSFileManager defaultManager] isExecutableFileAtPath:ghosttyPath])
+		return ghosttyPath;
+
+	return nil;
+}
+
+- (BOOL)executeCommandInConfiguredTerminal:(NSString *)terminalPath {
+	if(![terminalPath length])
+		return NO;
+
+	if(![[NSFileManager defaultManager] isExecutableFileAtPath:terminalPath]) {
+		NSLog(@"Configured terminal is not executable: %@", terminalPath);
+		return NO;
+	}
+
+	NSTask *task = [[NSTask alloc] init];
+
+	// On macOS, Ghostty must be opened through Launch Services rather than by
+	// executing its binary directly.  Run an interactive login shell so the
+	// window remains usable once the requested command has finished.
+	if([[terminalPath lastPathComponent] caseInsensitiveCompare:@"ghostty"] == NSOrderedSame) {
+		NSString *shell = [DTRunManager shellPath];
+		NSString *command = self.command;
+		if(![command length])
+			command = @":";
+		command = [command stringByAppendingFormat:@"; exec %@ -l", shell];
+		NSString *applicationPath = [[[terminalPath stringByDeletingLastPathComponent]
+								 stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
+		[task setLaunchPath:@"/usr/bin/open"];
+		[task setArguments:@[@"-na", applicationPath, @"--args",
+							 [@"--working-directory=" stringByAppendingString:self.workingDirectory],
+							 @"-e", shell, @"-l", @"-c", command]];
+	} else {
+		[task setLaunchPath:terminalPath];
+		[task setCurrentDirectoryPath:self.workingDirectory];
+	}
+
+	@try {
+		[task launch];
+	}
+	@catch (NSException *exception) {
+		NSLog(@"Could not launch configured terminal %@: %@", terminalPath, exception);
+		return NO;
+	}
+
+	return YES;
+}
+
 - (IBAction)executeCommandInTerminal:(id) __unused sender {
 	// Commit editing first
 	if(![[self window] makeFirstResponder:[self window]])
 		return;
+
+	NSString *configuredTerminalPath = [self configuredTerminalPath];
+	if([configuredTerminalPath length]) {
+		[self executeCommandInConfiguredTerminal:configuredTerminalPath];
+		return;
+	}
 	
 	NSString* cdCommandString = [NSString stringWithFormat:@"cd %@", escapedPath(self.workingDirectory)];
 	
