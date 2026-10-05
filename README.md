@@ -15,7 +15,16 @@ Command line work isn't a separate task that should live on its own—it's an in
 
 # How to get it?
 
-For drag'n'drop installable DMG images, see the [releases][] section of [muhqu's DTerm fork][releases] on GitHub.  
+For drag'n-drop installable DMG images, see the [releases][] section on GitHub.
+
+# Ghostty
+
+DTerm uses Ghostty automatically when it is installed at
+`/Applications/Ghostty.app/Contents/MacOS/ghostty`.
+
+Press `⌘↩` to send the command to the active terminal in Ghostty's active
+window. If Ghostty is not running, DTerm opens it normally. Set `DTERM_TERM`
+to override the terminal executable.
 
 # How to build it yourself?
 
@@ -36,5 +45,5 @@ Copyright © 2004-2013 [Decimus Software, Inc][decimus].
 
 "DTerm" and "Decimus" are either trademarks or registered trademarks of [Decimus Software, Inc][decimus].
 
-[releases]: https://github.com/muhqu/dterm/releases
+[releases]: https://github.com/NicHub/dterm/releases
 [decimus]: http://decimus.net
