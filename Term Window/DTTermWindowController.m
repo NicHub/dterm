@@ -14,6 +14,14 @@
 
 static void * DTPreferencesContext = &DTPreferencesContext;
 
+static NSString *DTAppleScriptString(NSString *string) {
+	NSString *escapedString = [string stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
+	escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+	escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
+	escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\r" withString:@"\\r"];
+	return [NSString stringWithFormat:@"\"%@\"", escapedString];
+}
+
 @implementation DTTermWindowController
 
 @synthesize workingDirectory, selectedURLs, command, runs, runsController;
@@ -252,28 +260,32 @@ static void * DTPreferencesContext = &DTPreferencesContext;
 		return NO;
 	}
 
-	NSTask *task = [[NSTask alloc] init];
-
-	// On macOS, Ghostty must be opened through Launch Services rather than by
-	// executing its binary directly.  Run an interactive login shell so the
-	// window remains usable once the requested command has finished.
 	if([[terminalPath lastPathComponent] caseInsensitiveCompare:@"ghostty"] == NSOrderedSame) {
-		NSString *shell = [DTRunManager shellPath];
-		NSString *command = self.command;
-		if(![command length])
-			command = @":";
-		command = [command stringByAppendingFormat:@"; exec %@ -l", shell];
+		if([self executeCommandInRunningGhostty])
+			return YES;
+
+		// Without an existing Ghostty window, open the application normally.  Do
+		// not use -e: Ghostty asks for confirmation before executing such commands.
 		NSString *applicationPath = [[[terminalPath stringByDeletingLastPathComponent]
 								 stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
+		NSTask *task = [[NSTask alloc] init];
 		[task setLaunchPath:@"/usr/bin/open"];
-		[task setArguments:@[@"-na", applicationPath, @"--args",
-							 [@"--working-directory=" stringByAppendingString:self.workingDirectory],
-							 @"-e", shell, @"-l", @"-c", command]];
-	} else {
-		[task setLaunchPath:terminalPath];
-		[task setCurrentDirectoryPath:self.workingDirectory];
+		[task setArguments:@[applicationPath]];
+
+		@try {
+			[task launch];
+		}
+		@catch (NSException *exception) {
+			NSLog(@"Could not open Ghostty: %@", exception);
+			return NO;
+		}
+
+		return YES;
 	}
 
+	NSTask *task = [[NSTask alloc] init];
+	[task setLaunchPath:terminalPath];
+	[task setCurrentDirectoryPath:self.workingDirectory];
 	@try {
 		[task launch];
 	}
@@ -281,8 +293,35 @@ static void * DTPreferencesContext = &DTPreferencesContext;
 		NSLog(@"Could not launch configured terminal %@: %@", terminalPath, exception);
 		return NO;
 	}
-
 	return YES;
+}
+
+- (BOOL)executeCommandInRunningGhostty {
+	SBApplication *ghostty = [SBApplication applicationWithBundleIdentifier:@"com.mitchellh.ghostty"];
+	if(![ghostty isRunning])
+		return NO;
+
+	NSString *terminalCommand = [NSString stringWithFormat:@"cd %@", escapedPath(self.workingDirectory)];
+	if([self.command length])
+		terminalCommand = [terminalCommand stringByAppendingFormat:@"; %@", self.command];
+
+	NSString *source = [NSString stringWithFormat:
+		@"tell application id \"com.mitchellh.ghostty\"\n"
+		 "\tset targetTerminal to focused terminal of selected tab of front window\n"
+		 "\tinput text %@ to targetTerminal\n"
+		 "\tsend key \"enter\" to targetTerminal\n"
+		 "\tactivate window front window\n"
+		 "\treturn \"true\"\n"
+		 "end tell", DTAppleScriptString(terminalCommand)];
+	NSDictionary *error = nil;
+	NSAppleScript *script = [[NSAppleScript alloc] initWithSource:source];
+	NSAppleEventDescriptor *result = [script executeAndReturnError:&error];
+	if(!result) {
+		NSLog(@"Could not send command to Ghostty: %@", error);
+		return NO;
+	}
+
+	return [[result stringValue] boolValue];
 }
 
 - (IBAction)executeCommandInTerminal:(id) __unused sender {
