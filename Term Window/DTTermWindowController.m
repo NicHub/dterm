@@ -22,6 +22,11 @@ static NSString *DTAppleScriptString(NSString *string) {
 	return [NSString stringWithFormat:@"\"%@\"", escapedString];
 }
 
+@interface DTTermWindowController ()
+@property (copy) NSString *pendingGhosttyCommand;
+@property NSUInteger pendingGhosttyCommandAttempts;
+@end
+
 @implementation DTTermWindowController
 
 @synthesize workingDirectory, selectedURLs, command, runs, runsController;
@@ -261,7 +266,8 @@ static NSString *DTAppleScriptString(NSString *string) {
 	}
 
 	if([[terminalPath lastPathComponent] caseInsensitiveCompare:@"ghostty"] == NSOrderedSame) {
-		if([self executeCommandInRunningGhostty])
+		NSString *ghosttyCommand = [self commandToExecuteInGhostty];
+		if([self executeCommandInRunningGhostty:ghosttyCommand])
 			return YES;
 
 		// Without an existing Ghostty window, open the application normally.  Do
@@ -280,6 +286,12 @@ static NSString *DTAppleScriptString(NSString *string) {
 			return NO;
 		}
 
+		self.pendingGhosttyCommand = ghosttyCommand;
+		self.pendingGhosttyCommandAttempts = 0;
+		[self performSelector:@selector(executePendingGhosttyCommand)
+					   withObject:nil
+					   afterDelay:0.25];
+
 		return YES;
 	}
 
@@ -296,14 +308,17 @@ static NSString *DTAppleScriptString(NSString *string) {
 	return YES;
 }
 
-- (BOOL)executeCommandInRunningGhostty {
-	SBApplication *ghostty = [SBApplication applicationWithBundleIdentifier:@"com.mitchellh.ghostty"];
-	if(![ghostty isRunning])
-		return NO;
-
+- (NSString *)commandToExecuteInGhostty {
 	NSString *terminalCommand = [NSString stringWithFormat:@"cd %@", escapedPath(self.workingDirectory)];
 	if([self.command length])
 		terminalCommand = [terminalCommand stringByAppendingFormat:@"; %@", self.command];
+	return terminalCommand;
+}
+
+- (BOOL)executeCommandInRunningGhostty:(NSString *)terminalCommand {
+	SBApplication *ghostty = [SBApplication applicationWithBundleIdentifier:@"com.mitchellh.ghostty"];
+	if(![ghostty isRunning])
+		return NO;
 
 	NSString *source = [NSString stringWithFormat:
 		@"tell application id \"com.mitchellh.ghostty\"\n"
@@ -322,6 +337,26 @@ static NSString *DTAppleScriptString(NSString *string) {
 	}
 
 	return [[result stringValue] boolValue];
+}
+
+- (void)executePendingGhosttyCommand {
+	if(!self.pendingGhosttyCommand)
+		return;
+
+	if([self executeCommandInRunningGhostty:self.pendingGhosttyCommand]) {
+		self.pendingGhosttyCommand = nil;
+		return;
+	}
+
+	self.pendingGhosttyCommandAttempts++;
+	if(self.pendingGhosttyCommandAttempts < 20) {
+		[self performSelector:@selector(executePendingGhosttyCommand)
+					   withObject:nil
+					   afterDelay:0.25];
+	} else {
+		NSLog(@"Ghostty did not become ready to receive a command");
+		self.pendingGhosttyCommand = nil;
+	}
 }
 
 - (IBAction)executeCommandInTerminal:(id) __unused sender {
